@@ -1,4 +1,7 @@
-import {atom} from "jotai";
+import { atom } from "jotai";
+import { taskModels } from "../mock";
+import { ITask } from "../types";
 
 
-export const countAtom = atom<number>(0);
+export const Tasks = atom<ITask[]>(taskModels);
+
