@@ -1,7 +1,7 @@
 import { Container, Heading, SimpleGrid } from "@chakra-ui/react";
 import "./App.css";
-import { Columns } from "./types";
 import { Column } from "./components";
+import { Columns } from "./types";
 
 const App = () => {
 

@@ -1,8 +1,9 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { Badge, Box, Heading, IconButton, Stack, useColorModeValue } from "@chakra-ui/react";
-import { useAtom } from "jotai";
-import { Tasks } from "../../models";
-import { ColumnsType } from "../../types";
+import { useAtom, useSetAtom } from "jotai";
+import { useCallback } from "react";
+import { removeTaskFamily, setTasksFamily, tasksFamily, updateTaskFamily } from "../../models";
+import { ColumnsType, UpdatePayload } from "../../types";
 import { Task } from "../Task";
 import { ColumColorScheme } from "./types";
 
@@ -11,7 +12,18 @@ export interface ColumnProps {
 }
 
 export const Column = ({ column }: ColumnProps) => {
-  const [tasks] = useAtom(Tasks);
+  const [tasks] = useAtom(tasksFamily(column));
+  const setTasks = useSetAtom(setTasksFamily(column));
+  const setUpdateTasks = useSetAtom(updateTaskFamily(column));
+  const setRemoveTasks = useSetAtom(removeTaskFamily(column));
+
+
+  const handleUpdate = useCallback((payload: UpdatePayload) => {
+    setUpdateTasks(payload);
+  }, []);
+  const handleRemove = useCallback((id: string) => {
+    setRemoveTasks(id);
+  }, []);
 
   return (
     <Box>
@@ -20,8 +32,7 @@ export const Column = ({ column }: ColumnProps) => {
           px={2}
           py={1}
           rounded="lg"
-          colorScheme={ColumColorScheme[column]}
-        >
+          colorScheme={ColumColorScheme[column]}>
           {column}
         </Badge>
       </Heading>
@@ -36,6 +47,7 @@ export const Column = ({ column }: ColumnProps) => {
         colorScheme="black"
         icon={<AddIcon />}
         aria-label="add-task"
+        onClick={() => setTasks()}
       />
       <Stack
         direction={{ base: "row", md: "column" }}
@@ -46,9 +58,16 @@ export const Column = ({ column }: ColumnProps) => {
         bgColor={useColorModeValue("gray.50", "gray.900")}
         rounded="lg"
         boxShadow="md"
-        overflow="auto"
-      >
-        {tasks.map((task, index) => (<Task key={task.id} task={task} index={index} />))}
+        overflow="auto">
+        {tasks.map((task, index) => (
+          <Task
+            index={index}
+            task={task}
+            key={task.id}
+            onUpdate={handleUpdate}
+            onRemove={handleRemove}
+          />
+        ))}
       </Stack>
     </Box>
   );
