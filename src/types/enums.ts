@@ -5,3 +5,7 @@ export const Columns = {
   COMPLETED: "Completed"
 };
 export type ColumnsType = typeof Columns[keyof typeof Columns];
+
+export enum ItemType {
+  TASK = "Task"
+}
