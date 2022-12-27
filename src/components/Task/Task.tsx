@@ -1,6 +1,7 @@
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Box, IconButton } from "@chakra-ui/react";
 import React, { memo, useCallback } from "react";
+import { useTaskDragAndDrop } from "../../hooks";
 import { ITask, UpdatePayload } from "../../types";
 import { AutoResizeTextArea } from "../AutoResizeTextArea";
 
@@ -14,6 +15,10 @@ export interface TaskProps {
 
 export const Task = memo(({ index, task, onUpdate: handleUpdate, onRemove: handleRemove }: TaskProps) => {
 
+  const { ref, isDragging } = useTaskDragAndDrop<HTMLDivElement>({
+    task,
+    index
+  });
   const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newTitle = e.target.value;
     handleUpdate({
@@ -26,6 +31,7 @@ export const Task = memo(({ index, task, onUpdate: handleUpdate, onRemove: handl
   }, [task.id]);
   return (
     <Box
+      ref={ref}
       as="div"
       role="group"
       position="relative"
@@ -36,7 +42,11 @@ export const Task = memo(({ index, task, onUpdate: handleUpdate, onRemove: handl
       pb={1}
       boxShadow="xl"
       cursor="grab"
-      bgColor={task.color}>
+      bgColor={task.color}
+      flexGrow={0}
+      flexShrink={0}
+      opacity={isDragging ? 0.5 : 1}
+    >
       <IconButton
         aria-label={"delete-task"}
         position="absolute"

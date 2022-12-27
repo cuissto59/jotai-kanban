@@ -18,4 +18,16 @@ export interface UpdatePayload {
   updatedTask: Omit<Partial<ITask>, "id">
 }
 
+export interface DropTaskPayload {
+  id: ITask["id"],
+  from: ColumnsType
+}
+
+export interface DragItem {
+  index: number,
+  id: ITask["id"],
+  from: ColumnsType,
+
+}
+
 

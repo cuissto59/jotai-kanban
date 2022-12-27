@@ -3,7 +3,7 @@ import { atomFamily, atomWithStorage } from "jotai/utils";
 import { v4 as uuidv4 } from "uuid";
 import { ColumColorScheme } from "../components";
 import { taskModels } from "../mock";
-import { ColumnsType, ITask, TaskSet, UpdatePayload } from "../types";
+import { ColumnsType, DropTaskPayload, ITask, TaskSet, UpdatePayload } from "../types";
 import { LOCAL_TASKS } from "../utils";
 
 interface AddTasksProps {
@@ -35,6 +35,7 @@ const updateTask = ({ tasks, payload }: UpdateTaskProps): ITask[] => {
   const { id, updatedTask } = payload;
   return tasks.map((task) => task.id === id ? { ...task, ...updatedTask } : task);
 };
+
 
 interface removeTasksProps {
   tasks: ITask[],
@@ -70,6 +71,27 @@ export const removeTaskFamily = atomFamily((column: ColumnsType) => atom(null,
         id: id
       })
     }));
+  }
+));
+export const dropTaskFrom = atomFamily((column: ColumnsType) => atom(null,
+  (get, set, payload: DropTaskPayload) => {
+    set(TasksSet, (prev) => {
+      const { from, id } = payload;
+      const movingTask = get(TasksSet)[from].find((task) => task.id === id);
+      if (!movingTask) {
+        return get(TasksSet);
+      }
+
+      return {
+        ...prev,
+        [from]: removeTask({
+          tasks: get(TasksSet)[from],
+          id: id
+        }),
+        [column]: [{ ...movingTask, column, color: ColumColorScheme[column].concat(".300") }, ...get(TasksSet)[column]]
+      };
+
+    });
   }
 ));
 
