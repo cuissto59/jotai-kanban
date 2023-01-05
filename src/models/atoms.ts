@@ -3,8 +3,8 @@ import { atomFamily, atomWithStorage } from "jotai/utils";
 import { v4 as uuidv4 } from "uuid";
 import { ColumColorScheme } from "../components";
 import { taskModels } from "../mock";
-import { ColumnsType, DropTaskPayload, ITask, TaskSet, UpdatePayload } from "../types";
-import { LOCAL_TASKS } from "../utils";
+import { ColumnsType, DropTaskPayload, ITask, SwapTaskPayload, TaskSet, UpdatePayload } from "../types";
+import { LOCAL_TASKS, swap } from "../utils";
 
 interface AddTasksProps {
   tasks: TaskSet,
@@ -43,6 +43,7 @@ interface removeTasksProps {
 }
 
 const removeTask = ({ tasks, id }: removeTasksProps): ITask[] => tasks.filter((task) => task.id !== id);
+
 export const TasksSet = atomWithStorage<TaskSet>(LOCAL_TASKS, taskModels);
 export const tasksFamily = atomFamily((column: ColumnsType) => atom((get) => get(TasksSet)[column]));
 
@@ -94,5 +95,13 @@ export const dropTaskFrom = atomFamily((column: ColumnsType) => atom(null,
     });
   }
 ));
+
+export const swapTaskFamily = atomFamily((column: ColumnsType) => atom(null,
+  (get, set, payload: SwapTaskPayload) => {
+    set(TasksSet, (prev) => ({
+      ...prev,
+      [column]: swap(get(TasksSet)[column], payload.i, payload.j)
+    }));
+  }));
 
 

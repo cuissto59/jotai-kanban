@@ -3,7 +3,14 @@ import { Badge, Box, Heading, IconButton, Stack, useColorModeValue } from "@chak
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { useColumnDrop } from "../../hooks";
-import { dropTaskFrom, removeTaskFamily, setTasksFamily, tasksFamily, updateTaskFamily } from "../../models";
+import {
+  dropTaskFrom,
+  removeTaskFamily,
+  setTasksFamily,
+  swapTaskFamily,
+  tasksFamily,
+  updateTaskFamily
+} from "../../models";
 import { ColumnsType, UpdatePayload } from "../../types";
 import { Task } from "../Task";
 import { ColumColorScheme } from "./types";
@@ -18,6 +25,7 @@ export const Column = ({ column }: ColumnProps) => {
   const setUpdateTasks = useSetAtom(updateTaskFamily(column));
   const setRemoveTasks = useSetAtom(removeTaskFamily(column));
   const setDragAndDropTask = useSetAtom(dropTaskFrom(column));
+  const setSwapTasks = useSetAtom(swapTaskFamily(column));
 
 
   const { isOver, dropRef } = useColumnDrop({ column: column, handleDrop: setDragAndDropTask });
@@ -27,6 +35,13 @@ export const Column = ({ column }: ColumnProps) => {
   }, []);
   const handleRemove = useCallback((id: string) => {
     setRemoveTasks(id);
+  }, []);
+
+  const handleSwapTasks = useCallback((i: number, j: number) => {
+    setSwapTasks({
+      i: i,
+      j: j
+    });
   }, []);
 
 
@@ -73,6 +88,7 @@ export const Column = ({ column }: ColumnProps) => {
         key={task.id}
         onUpdate={handleUpdate}
         onRemove={handleRemove}
+        onDropHover={handleSwapTasks}
       />))}
     </Stack>
   </Box>);

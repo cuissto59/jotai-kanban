@@ -11,13 +11,22 @@ export interface TaskProps {
 
   onUpdate: (payload: UpdatePayload) => void;
   onRemove: (id: string) => void;
+
+  onDropHover: (i: number, j: number) => void;
 }
 
-export const Task = memo(({ index, task, onUpdate: handleUpdate, onRemove: handleRemove }: TaskProps) => {
+export const Task = memo(({
+                            index,
+                            task,
+                            onUpdate: handleUpdate,
+                            onRemove: handleRemove,
+                            onDropHover: handleDropHover
+                          }: TaskProps) => {
 
   const { ref, isDragging } = useTaskDragAndDrop<HTMLDivElement>({
     task,
-    index
+    index,
+    handleDropHover
   });
   const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newTitle = e.target.value;

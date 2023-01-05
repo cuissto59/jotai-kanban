@@ -23,6 +23,11 @@ export interface DropTaskPayload {
   from: ColumnsType
 }
 
+export interface SwapTaskPayload {
+  i: number,
+  j: number
+}
+
 export interface DragItem {
   index: number,
   id: ITask["id"],
